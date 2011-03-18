@@ -19,10 +19,6 @@ EventMachine.run do
       erb "#{name}.js".to_sym
     end
 
-    #get '/main.js' do
-    #  erb "main.js".to_sym
-    #end
-
     sockets = []
 
     EventMachine::WebSocket.start(:host => IP_HOST, :port => 8080) do |ws|
