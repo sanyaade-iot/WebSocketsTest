@@ -1,0 +1,14 @@
+body
+{
+    padding: 0px;
+    margin: 0px;
+    background-color: gray;
+}
+
+#main
+{
+    padding: 0px;
+    margin: auto;
+    width: 1400px;
+    height: 850px;
+}

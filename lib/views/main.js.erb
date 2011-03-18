@@ -1,0 +1,75 @@
+const FPS = 60.0;
+
+var canvas = null;
+var context = null;
+
+window.onload = init;
+window.onkeydown = keyDown;
+window.onkeyup = keyUp;
+
+var ws = new WebSocket('ws://<%= IP_HOST %>:8080');
+
+var ship = new SpaceShip(ws);
+var enemy = new EnemyShip(ws);
+
+ws.onmessage = function(event)
+{
+    var data = JSON.parse(event.data);
+    enemy.x = data.x;
+    enemy.y = data.y;
+    enemy.rotation = data.rotation;
+}
+
+function init()
+{
+    canvas = document.getElementById('canvas');
+	context = canvas.getContext('2d');
+
+    setInterval(draw, 1000.0 / FPS);
+}
+
+function keyDown(event)
+{
+    if (event.keyCode == 37) // left
+        ship.keyLeft = true;
+    else if (event.keyCode == 39) // right
+        ship.keyRight = true;
+
+    if (event.keyCode == 38) // up
+        ship.keyUp = true;
+    else if (event.keyCode == 40) // down
+        ship.keyDown = true;
+}
+
+function keyUp(event)
+{
+    if (event.keyCode == 37) // left
+        ship.keyLeft = false;
+    if (event.keyCode == 39) // right
+        ship.keyRight = false;
+
+    if (event.keyCode == 38) // up
+        ship.keyUp = false;
+    if (event.keyCode == 40) // down
+        ship.keyDown = false;
+}
+
+function draw()
+{
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    ship.update();
+
+    var data = {
+        x: ship.x,
+        y: ship.y,
+        rotation: ship.rotation
+    };
+
+    ws.send(JSON.stringify(data));
+
+    ship.draw(context);
+
+    enemy.update();
+    enemy.draw(context);
+}
